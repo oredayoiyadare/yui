@@ -36,23 +36,14 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if message.content == "おやすみ":
+    # 「おやすみ」に反応
+    if "おやすみ" in message.content:
         await message.channel.send("おやすみっす、パイセン。")
-    await bot.process_commands(message)
 
-bot.event
-async def on_ready():
-    print(f"ログインしました: {bot.user}")
+    # 「調子どう？」に反応
+    elif "調子どう" in message.content:
+        await message.channel.send("今日も元気っすよ〜。パイセンも頑張るっすよ！")
 
-
-# メッセージを受け取った時の処理
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-
-    if message.content == "調子どう？":
-        await message.channel.send("今日も元気っすよ〜。パイセンも頑張るっすよ!")
     await bot.process_commands(message)
 
 
