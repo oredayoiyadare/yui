@@ -49,18 +49,19 @@ async def on_message(message):
 
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
-import asyncio
 
 import asyncio
 import datetime
+import pytz
 
 @bot.event
 async def on_ready():
     print(f"ログインしました: {bot.user}")
     channel = bot.get_channel(1437049382242615379)
+jst = pytz.timezone('Asia/Tokyo')
 
     while True:
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(jst)
         # 7:00ちょうどに送る
         if now.hour == 7 and now.minute == 0:
             await channel.send("おはようっすパイセン！今日もがんばるっす！🔥")
