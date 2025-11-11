@@ -66,7 +66,8 @@ jst = pytz.timezone('Asia/Tokyo')
         if now.hour == 7 and now.minute == 0:
             await channel.send("おはようっすパイセン！今日もがんばるっす！🔥")
             await asyncio.sleep(60)  # 同じ1分内で連投しないように待機
-        await asyncio.sleep(30)  # 30秒ごとに時間チェック
+        
+    await asyncio.sleep(30)  # 30秒ごとに時間チェック
 # 起動！
 keep_alive()
 bot.run(os.environ['TOKEN'])
