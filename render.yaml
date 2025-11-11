@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: yui
-    env: python
-    buildCommand: ""
-    startCommand: python main.py
-    pythonVersion: 3.11.9
