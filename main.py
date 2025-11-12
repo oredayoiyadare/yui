@@ -29,45 +29,21 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-
 # メッセージを受け取った時の処理
 @bot.event
 async def on_message(message):
     if message.author.bot:
         return
 
-    # 「おやすみ」に反応
-    if "おやすみ" in message.content:
-        await message.channel.send("おやすみっす、パイセン。")
+    # 「ping」に反応
+    if "ping" in message.content:
+        await message.channel.send("pong")
 
     # 「調子どう？」に反応
     elif "調子どう" in message.content:
         await message.channel.send("今日も元気っすよ〜。パイセンも頑張るっすよ！")
 
     await bot.process_commands(message)
-
-# じゃんけん
-@bot.command()
-async def janken(ctx, hand: str):
-    hands = ["グー", "チョキ", "パー"]
-    bot_hand = random.choice(hands)
-
-    # ユーザーの手を正規化
-    if hand not in hands:
-        await ctx.send("使える手は「グー」「チョキ」「パー」っす！")
-        return
-
-    # 勝敗判定
-    if hand == bot_hand:
-        result = "引き分けっす！"
-    elif (hand == "グー" and bot_hand == "チョキ") or \
-         (hand == "チョキ" and bot_hand == "パー") or \
-         (hand == "パー" and bot_hand == "グー"):
-        result = "パイセンの勝ちっす！"
-    else:
-        result = "俺の勝ちっす！"
-
-    await ctx.send(f"パイセン：{hand}\n俺：{bot_hand}\n→ {result}")
 
 #おみくじ
 @bot.command()
@@ -82,14 +58,14 @@ async def omikuji(ctx):
         "うーん…今日は静かに過ごすっす。",
         "……パイセン、気をつけてっす💦"
     ]
-    
+
     index = random.randint(0, len(fortunes) - 1)
     
     await ctx.send(f"🎴 パイセンの運勢は…… **{fortunes[index]}** っす！\n{messages[index]}")
 
-#サイコロ
 @bot.command()
 async def dice(ctx, num: int = 1):
+
     if num < 1:
         await ctx.send("少なくとも1個は振るっす！")
         return
@@ -105,13 +81,63 @@ async def dice(ctx, num: int = 1):
     else:
         await ctx.send(f"🎲 出た目は {', '.join(map(str, rolls))}っす！\n合計：{total}っす！")
 
+
+#じゃんけん
+class JankenView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="✊ グー", style=discord.ButtonStyle.red)
+    async def rock(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.play(interaction, "グー")
+
+    @discord.ui.button(label="✌ チョキ", style=discord.ButtonStyle.green)
+    async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.play(interaction, "チョキ")
+
+    @discord.ui.button(label="🖐 パー", style=discord.ButtonStyle.blurple)
+    async def paper(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.play(interaction, "パー")
+
+        async def play(self, interaction, user_hand):
+        hands = ["グー", "チョキ", "パー"]
+        bot_hand = random.choice(hands)
+
+        if user_hand == bot_hand:
+            result = "あいこっすね！"
+            color = discord.Color.yellow()
+        elif (user_hand == "グー" and bot_hand == "チョキ") or \
+             (user_hand == "チョキ" and bot_hand == "パー") or \
+             (user_hand == "パー" and bot_hand == "グー"):
+            result = "パイセンの勝ちっす！"
+            color = discord.Color.green()
+        else:
+            result = "俺の勝ちっす！"
+            color = discord.Color.red()
+
+        embed = discord.Embed(
+            title="🎲 じゃんけん結果",
+            description=f"あなた：{user_hand}\n俺：{bot_hand}\n→ **{result}**",
+            color=color
+        )
+        embed.set_footer(text="Powered by 結bot")
+
+        await interaction.response.send_message(embed=embed)
+        await interaction.message.delete()
+
+
+@bot.command()
+async def janken(ctx):
+    view = JankenView()
+    await ctx.send("どの手を出すっすか？", view=view)
+
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
 
 @bot.event
 async def on_ready():
     print(f"ログインしました: {bot.user}")
-    channel = bot.get_channel(1437049382242615379)
+    channel = bot.get_channel(1438103528190115904)
     jst = pytz.timezone('Asia/Tokyo')
 
     while True:
