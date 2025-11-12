@@ -124,9 +124,9 @@ class JankenView(discord.ui.View):
                 embed.set_footer(text="Powered by 結bot")
 
     # 返信の分岐（既にrespond済みかどうか）
-          if interaction.response.is_done():
+                if interaction.response.is_done():
                     await interaction.followup.send(embed=embed)
-          else:
+                else:
                     await interaction.response.send_message(embed=embed)
 
     # 少し待ってから削除（非同期っす）
