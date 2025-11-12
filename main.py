@@ -150,7 +150,7 @@ TOKEN = os.environ["TOKEN"]
 async def on_ready():
     print(f"ログインしました: {bot.user}")
     bot.add_view(JankenView())
-    channel = bot.get_channel(1438103528190115904)
+    channel = bot.get_channel(1437049382242615379)
     jst = pytz.timezone('Asia/Tokyo')
 
     while True:
