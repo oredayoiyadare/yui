@@ -3,6 +3,10 @@ from threading import Thread
 import discord
 from discord.ext import commands
 import os
+import asyncio
+import datetime
+import pytz
+
 
 # --- Flaskサーバー ---
 app = Flask(__name__)
@@ -50,10 +54,6 @@ async def on_message(message):
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
 
-import asyncio
-import datetime
-import pytz
-
 @bot.event
 async def on_ready():
     print(f"ログインしました: {bot.user}")
@@ -68,6 +68,15 @@ async def on_ready():
             await asyncio.sleep(60)  # 同じ1分内で連投しないように待機
         await asyncio.sleep(30)  # 30秒ごとに時間チェック
 
+# --- 自動再接続ラッパー ---
+async def start_bot():
+    while True:
+        try:
+            await bot.start(os.environ["TOKEN"])
+        except Exception as e:
+            print(f"Botが落ちたっす…再起動するっす: {e}")
+            await asyncio.sleep(5)  # 少し待ってから再起動
+
 # 起動！
 keep_alive()
-bot.run(os.environ['TOKEN'])
+asyncio.run(start_bot())  # Bot起動（落ちたら再接続）
