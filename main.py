@@ -121,7 +121,7 @@ class JankenView(discord.ui.View):
                     description=f"あなた：{user_hand}\n俺：{bot_hand}\n→ **{result}**",
                     color=color
           )
-          embed.set_footer(text="Powered by 結bot")
+                embed.set_footer(text="Powered by 結bot")
 
     # 返信の分岐（既にrespond済みかどうか）
           if interaction.response.is_done():
@@ -130,11 +130,11 @@ class JankenView(discord.ui.View):
                     await interaction.response.send_message(embed=embed)
 
     # 少し待ってから削除（非同期っす）
-    await asyncio.sleep(1)
-    try:
-        await interaction.message.delete()
-    except Exception as e:
-        print(f"メッセージ削除エラー：{e}")
+          await asyncio.sleep(1)
+          try:
+                    await interaction.message.delete()
+          except Exception as e:
+                    print(f"メッセージ削除エラー：{e}")
 
 
 
