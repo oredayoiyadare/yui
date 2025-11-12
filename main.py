@@ -35,9 +35,9 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    # 「ping」に反応
-    if "ping" in message.content:
-        await message.channel.send("pong")
+    # 「おやすみ」に反応
+    if "おやすみ" in message.content:
+        await message.channel.send("おやすみっす、パイセン。")
 
     # 「調子どう？」に反応
     elif "調子どう" in message.content:
