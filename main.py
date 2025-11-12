@@ -99,42 +99,42 @@ class JankenView(discord.ui.View):
     async def paper(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.play(interaction, "パー")
 
-        async def play(self, interaction, user_hand):
-                hands = ["グー", "チョキ", "パー"]
-                bot_hand = random.choice(hands)
+    async def play(self, interaction, user_hand):
+        hands = ["グー", "チョキ", "パー"]
+        bot_hand = random.choice(hands)
 
-                if user_hand == bot_hand:
-                    result = "あいこっすね！"
-                    color = discord.Color.yellow()
-                elif (user_hand == "グー" and bot_hand == "チョキ") or \
-                     (user_hand == "チョキ" and bot_hand == "パー") or \
-                     (user_hand == "パー" and bot_hand == "グー"):
-                    result = "パイセンの勝ちっす！"
-                    color = discord.Color.green()
-                else:
-                    result = "俺の勝ちっす！"
-                    color = discord.Color.red()
+        if user_hand == bot_hand:
+            result = "あいこっすね！"
+            color = discord.Color.blue()
+        elif (user_hand == "グー" and bot_hand == "チョキ") or \
+             (user_hand == "チョキ" and bot_hand == "パー") or \
+             (user_hand == "パー" and bot_hand == "グー"):
+            result = "パイセンの勝ちっす！"
+            color = discord.Color.green()
+        else:
+            result = "俺の勝ちっす！"
+            color = discord.Color.red()
 
     # Embedの生成（↑のif文と同じ階層でOK）
-                embed = discord.Embed(
-                    title="✊ じゃんけん結果",
-                    description=f"あなた：{user_hand}\n俺：{bot_hand}\n→ **{result}**",
-                    color=color
+        embed = discord.Embed(
+            title="✊ じゃんけん結果",
+            description=f"あなた：{user_hand}\n俺：{bot_hand}\n→ **{result}**",
+            color=color
           )
-                embed.set_footer(text="Powered by 結bot")
+        embed.set_footer(text="Powered by 結bot")
 
     # 返信の分岐（既にrespond済みかどうか）
-                if interaction.response.is_done():
-                    await interaction.followup.send(embed=embed)
-                else:
-                    await interaction.response.send_message(embed=embed)
+        if interaction.response.is_done():
+            await interaction.followup.send(embed=embed)
+        else:
+            await interaction.response.send_message(embed=embed)
 
-    # 少し待ってから削除（非同期っす）
-                await asyncio.sleep(1)
-                try:
-                    await interaction.message.delete()
-                except Exception as e:
-                    print(f"メッセージ削除エラー：{e}")
+    # 少し待ってから削除（非同期っす）    
+        await asyncio.sleep(1)
+        try:
+            await interaction.message.delete()
+        except Exception as e:
+            print(f"メッセージ削除エラー：{e}")
 
 
 
@@ -149,6 +149,7 @@ TOKEN = os.environ["TOKEN"]
 @bot.event
 async def on_ready():
     print(f"ログインしました: {bot.user}")
+    bot.add_view(JankenView())
     channel = bot.get_channel(1438103528190115904)
     jst = pytz.timezone('Asia/Tokyo')
 
