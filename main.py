@@ -29,10 +29,6 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-@bot.event
-async def on_ready():
-    print(f"ログインしました: {bot.user}")
-
 
 # メッセージを受け取った時の処理
 @bot.event
@@ -50,6 +46,28 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+# じゃんけん
+@bot.command()
+async def janken(ctx, hand: str):
+    hands = ["グー", "チョキ", "パー"]
+    bot_hand = random.choice(hands)
+
+    # ユーザーの手を正規化
+    if hand not in hands:
+        await ctx.send("使える手は「グー」「チョキ」「パー」っす！")
+        return
+
+    # 勝敗判定
+    if hand == bot_hand:
+        result = "引き分けっす！"
+    elif (hand == "グー" and bot_hand == "チョキ") or \
+         (hand == "チョキ" and bot_hand == "パー") or \
+         (hand == "パー" and bot_hand == "グー"):
+        result = "パイセンの勝ちっす！"
+    else:
+        result = "俺の勝ちっす！"
+
+    await ctx.send(f"パイセン：{hand}\n俺：{bot_hand}\n→ {result}")
 
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
