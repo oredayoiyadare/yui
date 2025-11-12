@@ -69,6 +69,25 @@ async def janken(ctx, hand: str):
 
     await ctx.send(f"パイセン：{hand}\n俺：{bot_hand}\n→ {result}")
 
+#おみくじ
+@bot.command()
+async def omikuji(ctx):
+    fortunes = ["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"]
+    messages = [
+        "今日は最高の運勢っす！✨",
+        "まあまあいい感じっすね！",
+        "悪くないっすよ！",
+        "油断禁物っす！",
+        "ちょっと注意っすね…！",
+        "うーん…今日は静かに過ごすっす。",
+        "……パイセン、気をつけてっす💦"
+    ]
+    
+    import random
+    index = random.randint(0, len(fortunes) - 1)
+    
+    await ctx.send(f"🎴 パイセンの運勢は…… **{fortunes[index]}** っす！\n{messages[index]}")
+
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
 
