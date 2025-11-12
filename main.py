@@ -99,7 +99,7 @@ class JankenView(discord.ui.View):
     async def paper(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.play(interaction, "パー")
 
-        async def play(self, interaction, user_hand):
+async def play(self, interaction, user_hand):
         hands = ["グー", "チョキ", "パー"]
         bot_hand = random.choice(hands)
 
