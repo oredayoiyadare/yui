@@ -83,10 +83,27 @@ async def omikuji(ctx):
         "……パイセン、気をつけてっす💦"
     ]
     
-    import random
     index = random.randint(0, len(fortunes) - 1)
     
     await ctx.send(f"🎴 パイセンの運勢は…… **{fortunes[index]}** っす！\n{messages[index]}")
+
+#サイコロ
+@bot.command()
+async def dice(ctx, num: int = 1):
+    if num < 1:
+        await ctx.send("少なくとも1個は振るっす！")
+        return
+    if num > 10:
+        await ctx.send("10個以上は振れないっす！")
+        return
+
+    rolls = [random.randint(1, 6) for _ in range(num)]
+    total = sum(rolls)
+
+    if num == 1:
+        await ctx.send(f"🎲 出た目は {rolls[0]}っす！")
+    else:
+        await ctx.send(f"🎲 出た目は {', '.join(map(str, rolls))}っす！\n合計：{total}っす！")
 
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
