@@ -6,7 +6,7 @@ import os
 import asyncio
 import datetime
 import pytz
-
+import random
 
 # --- Flaskサーバー ---
 app = Flask(__name__)
