@@ -122,8 +122,16 @@ async def play(self, interaction, user_hand):
         )
         embed.set_footer(text="Powered by 結bot")
 
+        if interaction.response.is_done():
+            await interaction.followup.send(embed=embed)
+    else:
         await interaction.response.send_message(embed=embed)
-        await interaction.message.delete()
+# 🕐 メッセージ削除は別アクションにする（非同期で少し待つ）
+　　　　　await asyncio.sleep(1)
+　　　　　try:
+    　　　　　await interaction.message.delete()
+　　　　　except Exception as e:
+   　　　　　 print(f"メッセージ削除エラー: {e}")
 
 
 @bot.command()
