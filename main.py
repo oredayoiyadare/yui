@@ -130,10 +130,10 @@ class JankenView(discord.ui.View):
                     await interaction.response.send_message(embed=embed)
 
     # 少し待ってから削除（非同期っす）
-          await asyncio.sleep(1)
-          try:
+                await asyncio.sleep(1)
+                try:
                     await interaction.message.delete()
-          except Exception as e:
+                except Exception as e:
                     print(f"メッセージ削除エラー：{e}")
 
 
