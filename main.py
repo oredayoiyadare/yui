@@ -165,7 +165,7 @@ async def check_time():
         print("[check_time] ⚠ channel is None — IDか権限を確認してください")
         return
 
-    if now.hour == 19 and not sent_today:
+    if now.hour == 7 and not sent_today:
         try:
             await channel.send("おはようっすパイセン！今日もがんばるっす！🔥")
             sent_today = True
