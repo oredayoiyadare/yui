@@ -2,6 +2,7 @@ from flask import Flask
 from threading import Thread
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import os
 import asyncio
 import datetime
@@ -146,20 +147,46 @@ async def janken(ctx):
 # Secrets に保存した TOKEN を取得
 TOKEN = os.environ["TOKEN"]
 
+# グローバルフラグ
+sent_today = False
+
+# --- 定期チェックタスク ---
+@tasks.loop(seconds=30)
+async def check_time():
+    global sent_today
+    jst = pytz.timezone('Asia/Tokyo')
+    now = datetime.datetime.now(jst)
+
+    channel = bot.get_channel(1438103528190115904)
+    print(f"[check_time] now={now} sent_today={sent_today} channel={channel}")
+
+
+    if channel is None:
+        print("[check_time] ⚠ channel is None — IDか権限を確認してください")
+        return
+
+    if now.hour == 19 and not sent_today:
+        try:
+            await channel.send("おはようっすパイセン！今日もがんばるっす！🔥")
+            sent_today = True
+            print("[check_time] メッセージ送信したっす")
+        except Exception as e:
+            print(f"[check_time] メッセージ送信エラー: {e}")
+
+    # 日が変わったときにリセット（0時を採用）
+    if now.hour == 0 and sent_today:
+        sent_today = False
+        print("[check_time] sent_today リセットしたっす")
+
+# on_ready で1回だけ start を呼ぶ（複数回呼ばない）
 @bot.event
 async def on_ready():
     print(f"ログインしました: {bot.user}")
-    bot.add_view(JankenView())
-    channel = bot.get_channel(1437049382242615379)
-    jst = pytz.timezone('Asia/Tokyo')
-
-    while True:
-        now = datetime.datetime.now(jst)
-        # 7:00ちょうどに送る
-        if now.hour == 7 and now.minute == 0:
-            await channel.send("おはようっすパイセン！今日もがんばるっす！🔥")
-            await asyncio.sleep(60)  # 同じ1分内で連投しないように待機
-        await asyncio.sleep(30)  # 30秒ごとに時間チェック
+    if not check_time.is_running():
+        check_time.start()
+        print("check_time を start したっす")
+    else:
+        print("check_time は既に動いてるっす")
 
 # --- 自動再接続ラッパー ---
 async def start_bot():
