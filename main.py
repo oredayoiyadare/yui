@@ -157,7 +157,7 @@ async def check_time():
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.datetime.now(jst)
 
-    channel = bot.get_channel(1438103528190115904)
+    channel = bot.get_channel(1437049382242615379)
     print(f"[check_time] now={now} sent_today={sent_today} channel={channel}")
 
 
