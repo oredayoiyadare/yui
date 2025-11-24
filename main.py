@@ -5,9 +5,15 @@ from discord.ext import commands
 from discord.ext import tasks
 import os
 import asyncio
-import datetime
 import pytz
 import random
+import datetime
+import json
+
+now = datetime.datetime.now()
+
+
+
 
 # --- Flaskサーバー ---
 app = Flask(__name__)
@@ -29,6 +35,99 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+# --- 勉強時間管理 ---
+study_sessions = {}  # ユーザーごとに開始時間を保存する dict
+
+@bot.command()
+async def check(ctx):
+    if ctx.author.id not in study_sessions:
+        await ctx.send("パイセン、まだタイマー開始してないっすよ？🫠")
+        return
+
+    now = datetime.datetime.now()
+    delta = now - study_sessions[ctx.author.id]
+    minutes = int(delta.total_seconds() // 60)
+
+    await ctx.send(f"今 {minutes} 分経ってるっすよ！がんばってるっすね💪🔥")
+
+@bot.command()
+async def start(ctx):
+    user_id = ctx.author.id
+
+    if user_id in study_sessions:
+        await ctx.send("パイセン、もう勉強始めてるっすよ？")
+        return
+
+    study_sessions[user_id] = datetime.datetime.now()
+    await ctx.send("⏱ 勉強スタートっす！気合い入れていくっすよ🔥")
+
+@bot.command()
+async def stop(ctx):
+    user_id = ctx.author.id
+
+    if user_id not in study_sessions:
+        await ctx.send("まだ勉強を開始してないっすよ？")
+        return
+
+    start_time = study_sessions.pop(user_id)
+    end_time = datetime.datetime.now()
+
+    duration = end_time - start_time
+    minutes = int(duration.total_seconds() // 60)
+
+    # JSON 読み込み
+    try:
+        with open("study_data.json", "r") as f:
+            data = json.load(f)
+    except:
+        data = {}
+
+    # データが無い場合初期化
+    if user_id not in data:
+        data[user_id] = {"total": 0, "sessions": []}
+
+    # 累計時間に加算
+    data[user_id]["total"] += duration
+    data[user_id]["sessions"].append({
+        "start": start_time,
+        "end": end_time,
+        "duration": duration
+    })
+    
+    # 時間に応じてメッセージ変更
+    if minutes < 30:
+        msg = "まだウォーミングアップっすね！ちょい短めっす！"
+    elif minutes < 60:
+        msg = "いいペースっすよパイセン！集中できてるっす！"
+    elif minutes < 120:
+        msg = "めっちゃ頑張ってるじゃないっすか…尊敬するっす！"
+    else:
+        msg = "パイセン…！？ もうプロの勉強家っすよ…！？"
+
+    await ctx.send(f"⏱ 勉強終了っす！\n勉強時間：**{minutes}分**\n{msg}")
+
+#合計時間出す
+@bot.command()
+async def total(ctx):
+    user = str(ctx.author.id)
+
+    try:
+        with open("study_data.json", "r") as f:
+            data = json.load(f)
+    except:
+        await ctx.send("まだ記録がないっすね…！")
+        return
+
+    if user not in data:
+        await ctx.send("パイセン、まだ1回も勉強してないっすね…？")
+        return
+
+    total_sec = data[user]["total"]
+    hour = total_sec // 3600
+    minute = (total_sec % 3600) // 60
+
+    await ctx.send(f"パイセンの累計勉強時間は **{hour}時間 {minute}分** っすよ！🔥")
 
 # メッセージを受け取った時の処理
 @bot.event
@@ -157,7 +256,7 @@ async def check_time():
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.datetime.now(jst)
 
-    channel = bot.get_channel(1437049382242615379)
+    channel = bot.get_channel(1438103528190115904)
     print(f"[check_time] now={now} sent_today={sent_today} channel={channel}")
 
 
