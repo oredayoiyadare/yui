@@ -80,7 +80,7 @@ async def stop(ctx):
     try:
         with open("study_data.json", "r") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         data = {}
 
     # データが無い場合初期化
@@ -115,7 +115,7 @@ async def total(ctx):
     try:
         with open("study_data.json", "r") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         await ctx.send("まだ記録がないっすね…！")
         return
 
