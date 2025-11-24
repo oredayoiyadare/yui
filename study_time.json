@@ -1,11 +1,11 @@
 {
     "user_id": {
-        "total": 5400,
+        "total": 0,
         "sessions": [
             {
-                "start": 1730000000,
-                "end": 1730003600,
-                "duration": 3600
+                "start": 0,
+                "end": 0,
+                "duration": 0
             }
         ]
     }
