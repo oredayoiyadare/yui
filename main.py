@@ -88,11 +88,11 @@ async def stop(ctx):
         data[user_id] = {"total": 0, "sessions": []}
 
     # 累計時間に加算
-    data[user_id]["total"] += duration
+    data[user_id]["total"] += minutes
     data[user_id]["sessions"].append({
         "start": start_time,
         "end": end_time,
-        "duration": duration
+        "duration": minutes
     })
     
     # 時間に応じてメッセージ変更
@@ -256,7 +256,7 @@ async def check_time():
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.datetime.now(jst)
 
-    channel = bot.get_channel(1438103528190115904)
+    channel = bot.get_channel(1437049382242615379)
     print(f"[check_time] now={now} sent_today={sent_today} channel={channel}")
 
 
