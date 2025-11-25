@@ -111,7 +111,10 @@ async def stop(ctx):
     else:
         msg = "パイセン…！？ もうプロの勉強家っすよ…！？"
 
-    await ctx.send(f"⏱ 勉強終了っす！\n勉強時間：**{minutes}分**\n{msg}")
+    start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S")
+    end_time_str = end_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    await ctx.send(f"⏱ 勉強終了っす！\n開始時刻:**{start_time_str}**\n終了時刻:**{end_time_str}**\n勉強時間：**{minutes}分**\n{msg}")
 
 #合計時間出す
 @bot.command()
@@ -262,7 +265,7 @@ async def check_time():
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.datetime.now(jst)
 
-    channel = bot.get_channel(1437049382242615379)
+    channel = bot.get_channel(1438103528190115904)
     print(f"[check_time] now={now} sent_today={sent_today} channel={channel}")
 
 
