@@ -41,19 +41,19 @@ study_sessions = {}  # ユーザーごとに開始時間を保存する dict
 
 @bot.command()
 async def check(ctx):
-    if ctx.author.id not in study_sessions:
+    if str(ctx.author.id) not in study_sessions:
         await ctx.send("パイセン、まだタイマー開始してないっすよ？🫠")
         return
 
     now = datetime.datetime.now()
-    delta = now - study_sessions[ctx.author.id]
+    delta = now - study_sessions[str(ctx.author.id)]
     minutes = int(delta.total_seconds() // 60)
 
     await ctx.send(f"今 {minutes} 分経ってるっすよ！がんばってるっすね💪🔥")
 
 @bot.command()
 async def start(ctx):
-    user_id = ctx.author.id
+    user_id = str(ctx.author.id) 
 
     if user_id in study_sessions:
         await ctx.send("パイセン、もう勉強始めてるっすよ？")
@@ -64,8 +64,8 @@ async def start(ctx):
 
 @bot.command()
 async def stop(ctx):
-    user_id = ctx.author.id
-
+    user_id = str(ctx.author.id) 
+    
     if user_id not in study_sessions:
         await ctx.send("まだ勉強を開始してないっすよ？")
         return
@@ -83,17 +83,23 @@ async def stop(ctx):
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
 
-    # データが無い場合初期化
+    # 初めてのユーザーなら初期化
     if user_id not in data:
         data[user_id] = {"total": 0, "sessions": []}
 
-    # 累計時間に加算
-    data[user_id]["total"] += minutes
+    # 累計時間加算（秒で保存）
+    data[user_id]["total"] += int(duration.total_seconds())
+
+    # セッション追加（datetimeは文字列化）
     data[user_id]["sessions"].append({
-        "start": start_time,
-        "end": end_time,
-        "duration": minutes
+        "start": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+        "end": end_time.strftime("%Y-%m-%d %H:%M:%S"),
+        "duration": int(duration.total_seconds())
     })
+
+    # JSON 書き込み（ここが重要！）
+    with open("study_data.json", "w") as f:
+        json.dump(data, f, indent=4)
     
     # 時間に応じてメッセージ変更
     if minutes < 30:
